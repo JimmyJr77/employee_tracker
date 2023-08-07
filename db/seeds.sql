@@ -1,0 +1,2 @@
+-- This SQL file will contain the initial data that will be inserted into the database when it is created. 
+-- This will support with sample data for testing your application.
