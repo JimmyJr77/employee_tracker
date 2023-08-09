@@ -3,7 +3,9 @@
 // call the appropriate functions from the models and queries files based on the user's input.
 
 const inquirer = require('inquirer');
-const { viewAllDepartments, viewAllRoles, viewAllEmployees, addDepartment, addRole, addEmployee, updateEmployeeRole } = require('./lib/queries');
+require('console.table')
+// const { viewAllDepartments } = require('./lib/queries');
+ const queries = require('./lib/queries');
 
 // Function to display the main menu
 function mainMenu() {
@@ -16,44 +18,52 @@ function mainMenu() {
         'View all departments',
         'View all roles',
         'View all employees',
-        'Add a department',
-        'Add a role',
-        'Add an employee',
-        'Update an employee role',
         'Exit'
       ],
     }
   ]).then((answer) => {
-    switch (answer.action) {
-      case 'View all departments':
-        viewAllDepartments();
-        break;
-      case 'View all roles':
-        viewAllRoles();
-        break;
-      case 'View all employees':
-        viewAllEmployees();
-        break;
-      case 'Add a department':
-        addDepartment();
-        break;
-      case 'Add a role':
-        addRole();
-        break;
-      case 'Add an employee':
-        addEmployee();
-        break;
-      case 'Update an employee role':
-        updateEmployeeRole();
-        break;
-      case 'Exit':
-        console.log('Goodbye!');
-        process.exit(0);
-      default:
-        console.log('Invalid choice. Please try again.');
-        mainMenu();
+    if (answer.action === 'View all departments') {
+      seeDeptartments()
+    } else if (answer.action === 'View all roles') {
+      seeRoles();
+    } else if (answer.action === 'View all employees') {
+      seeEmployees();
+    } else if (answer.action === 'Exit') {
+      console.log('Goodbye!');
+      process.exit(0);
+    } else {
+      console.log('Invalid choice. Please try again.');
+      mainMenu();
     }
   });
+}
+
+
+function seeDeptartments() {
+  queries.viewAllDepartments()
+    .then(([dept]) => {
+      console.log("\n");
+      console.table(dept);
+      mainMenu();
+    })
+}
+
+function seeRoles() {
+  queries.viewAllRoles()
+    .then(([dept]) => {
+      console.log("\n");
+      console.table(dept);
+      mainMenu();
+    })
+}
+
+function seeEmployees() {
+  queries.viewAllEmployees()
+    .then(([dept]) => {
+      console.log("\n");
+      console.table(dept);
+      mainMenu();
+    })
 }
 
 // Start the application

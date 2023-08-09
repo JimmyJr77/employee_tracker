@@ -38,4 +38,4 @@ VALUES
   ('Marie', 'Curie', 1, NULL),
   ('Pablo', 'Picasso', 6, 9),
   ('Charles', 'Darwin', 7, 9),
-  ('Socrates', NULL, 8, 10);
+  ('Socrates', 'the', 8, 10);
