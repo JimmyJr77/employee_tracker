@@ -4,8 +4,7 @@
 
 const inquirer = require('inquirer');
 require('console.table')
-// const { viewAllDepartments } = require('./lib/queries');
- const queries = require('./lib/queries');
+const queries = require('./lib/queries');
 
 // Function to display the main menu
 function mainMenu() {
@@ -37,7 +36,6 @@ function mainMenu() {
     }
   });
 }
-
 
 function seeDeptartments() {
   queries.viewAllDepartments()
