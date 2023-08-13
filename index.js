@@ -17,16 +17,50 @@ function mainMenu() {
         'View all departments',
         'View all roles',
         'View all employees',
+        'Add a department',
+        'Add a role',
         'Exit'
       ],
+    },
+    {
+      type: 'input',
+      name: 'new_department',
+      message: 'What is the name of the department you would like to add?',
+      when: (answers) => answers.action === 'Add a department'
+    },
+    {
+      type: 'input',
+      names: 'new_role',
+      message: 'What is the name of the role you would like to add?',
+      when: (answers) => answers.action === 'Add a role'
+    },
+    {
+      type: 'input',
+      names: 'new_role_salary',
+      message: 'What is the salary for this new role?',
+      when: (answers) => answers.action === 'Add a role'
+    },
+    {
+      type: 'list',
+      name: 'new_role_department',
+      message: 'What department does this role belong to?',
+      choices: async () => {
+          const departments = await queries.viewDepartments();
+          return departments.map(department => department.name);
+      },
+      when: (answers) => answers.action === 'Add a role'
     }
   ]).then((answer) => {
     if (answer.action === 'View all departments') {
-      seeDeptartments()
+      viewDeptartmentsOption()
     } else if (answer.action === 'View all roles') {
-      seeRoles();
+      viewRolesOption();
     } else if (answer.action === 'View all employees') {
-      seeEmployees();
+      viewEmployeesOption();
+    } else if (answer.action === 'Add a department') {
+      addDepartmentOption(answer.new_department); // passing the new department name
+    } else if (answer.role === 'Add a role') {
+      addRoleOption(answer.new_role, answer.new_role_salary, answer.new_role_department); // passing the new role name
     } else if (answer.action === 'Exit') {
       console.log('Goodbye!');
       process.exit(0);
@@ -37,31 +71,55 @@ function mainMenu() {
   });
 }
 
-function seeDeptartments() {
-  queries.viewAllDepartments()
-    .then(([dept]) => {
+function viewDeptartmentsOption() {
+  queries.viewDepartments()
+    .then(([depts]) => {
       console.log("\n");
-      console.table(dept);
+      console.table(depts);
       mainMenu();
     })
 }
 
-function seeRoles() {
-  queries.viewAllRoles()
-    .then(([dept]) => {
+function viewRolesOption() {
+  queries.viewRoles()
+    .then(([roles]) => {
       console.log("\n");
-      console.table(dept);
+      console.table(roles);
       mainMenu();
     })
 }
 
-function seeEmployees() {
-  queries.viewAllEmployees()
-    .then(([dept]) => {
+function viewEmployeesOption() {
+  queries.viewEmployees()
+    .then(([employees]) => {
       console.log("\n");
-      console.table(dept);
+      console.table(employees);
       mainMenu();
     })
+}
+
+function addDepartmentOption(newDeptName) {
+  queries.addDepartment(newDeptName)
+    .then(() => {
+      console.log(`${newDeptName} has been added to Departments`);
+      mainMenu();
+    })
+    .catch(error => {
+      console.error('Error adding department:', error);
+      mainMenu();
+    });
+}
+
+function addRoleOption(newRoleName, newRoleSalary, newRoleDept) {
+  queries.addRole(newRoleName, newRoleSalary, newRoleDept)
+    .then(() => {
+      console.log(`${newRoleName} has been added to Roles`);
+      mainMenu();
+    })
+    .catch(error => {
+      console.error('Error adding role:', error);
+      mainMenu();
+    });
 }
 
 // Start the application
