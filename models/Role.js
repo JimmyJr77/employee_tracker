@@ -7,6 +7,10 @@ class Role {
         this.connection = connection;
     }
   
+    listRoles() {
+        return this.connection.promise().query('SELECT * FROM role;');
+    }
+
     viewAllRoles() {
         return this.connection.promise().query(`
             SELECT 
@@ -18,7 +22,7 @@ class Role {
             LEFT JOIN department ON role.department_id = department.id
         `);
     }
-  
+
     addRole(newRoleName, newRoleSalary, newRoleDept) {
         return this.connection.promise().query(`
             INSERT INTO role (title, salary, department_id)

@@ -8,6 +8,7 @@ const connection = require('./lib/connection');
 const Department = require('./models/Department');
 const Role = require('./models/Role');
 const Employee = require('./models/Employee');
+const { default: ListPrompt } = require('inquirer/lib/prompts/list');
 
 const departmentModel = new Department(connection);
 const roleModel = new Role(connection);
@@ -26,6 +27,7 @@ function mainMenu() {
         'View all employees',
         'Add a department',
         'Add a role',
+        'Add an employee',
         'Exit'
       ],
     },
@@ -62,19 +64,66 @@ function mainMenu() {
             return [];
           });
       }
+    },
+    {
+      type: 'input',
+      name: 'new_employee_first_name',
+      message: "Enter the employee's first name:",
+      when: (answers) => answers.action === 'Add an employee'
+    },
+    {
+      type: 'input',
+      name: 'new_employee_last_name',
+      message: "Enter the employee's last name:",
+      when: (answers) => answers.action === 'Add an employee'
+    },
+    {
+      type: 'list',
+      name: 'new_employee_role',
+      message: "Select the employee's role:",
+      when: (answers) => answers.action === 'Add an employee',
+      choices: () => {
+        return roleModel.listRoles()
+          .then(([roles]) => {
+            return roles.map(role => ({ name: role.title, value: role.id }));
+          })
+          .catch(error => {
+            console.error('Error fetching roles:', error);
+            return [];
+          });
+      }
+    },
+    {
+      type: 'list',
+      name: 'new_employee_manager',
+      message: "Select the employee's manager:",
+      when: (answers) => answers.action === 'Add an employee',
+      choices: () => {
+        return employeeModel.viewAllEmployees()
+          .then(([employees]) => {
+            return employees.map(employee => ({ name: `${employee.first_name} ${employee.last_name}`, value: employee.id }));
+          })
+          .catch(error => {
+            console.error('Error fetching employees:', error);
+            return [];
+          });
+      }
     }
-  ]).then((answer) => {
-    if (answer.action === 'View all departments') {
+    
+  ]).then((answers) => {
+    if (answers.action === 'View all departments') {
       viewDepartmentsOption();
-    } else if (answer.action === 'View all roles') {
+    } else if (answers.action === 'View all roles') {
       viewRolesOption();
-    } else if (answer.action === 'View all employees') {
+    } else if (answers.action === 'View all employees') {
       viewEmployeesOption();
-    } else if (answer.action === 'Add a department') {
-      addDepartmentOption(answer.new_department); // passing the new department name
-    } else if (answer.action === 'Add a role') {
-      addRoleOption(answer.new_role, answer.new_role_salary, answer.new_role_department); // passing the new role name
-    } else if (answer.action === 'Exit') {
+    } else if (answers.action === 'Add a department') {
+      addDepartmentOption(answers.new_department); // passing the new department name
+    } else if (answers.action === 'Add a role') {
+      addRoleOption(answers.new_role, answers.new_role_salary, answers.new_role_department); // passing the new role name
+    } else if (answers.action === 'Add an employee') {
+      addEmployeeOption(answers.new_employee_first_name, answers.new_employee_last_name, answers.new_employee_role, answers.new_employee_manager);
+    } else if (answers.action === 'Exit') {
       console.log('Goodbye!');
       process.exit(0);
     } else {
@@ -146,6 +195,19 @@ function addRoleOption(newRoleName, newRoleSalary, newRoleDept) {
       mainMenu();
     });
 }
+
+function addEmployeeOption(firstName, lastName, roleId, managerId) {
+  employeeModel.addEmployee(firstName, lastName, roleId, managerId)
+    .then(() => {
+      console.log(`${firstName} ${lastName} has been added as an employee`);
+      mainMenu();
+    })
+    .catch(error => {
+      console.error('Error adding employee:', error);
+      mainMenu();
+    });
+}
+
 
 // Start the application
 mainMenu();

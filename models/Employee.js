@@ -24,18 +24,14 @@ class Employee {
             `);
     }
 
-//     addEmployee(newEmployeeName, ) {
+    addEmployee(firstName, lastName, roleId, managerId) {
+        return this.connection.promise().query(`
+          INSERT INTO employee (first_name, last_name, role_id, manager_id)
+          VALUES (?, ?, ?, ?)
+        `, [firstName, lastName, roleId, managerId]);
+      }
 
-//     }
-
-// }
-  
-//     addRole(newRoleName, newRoleSalary, newRoleDept) {
-//         return this.connection.promise().query(`
-//             INSERT INTO role (title, salary, department_id)
-//             VALUES (?, ?, ?)
-//             `, [newRoleName, newRoleSalary, newRoleDept]);
-  }
+};
 
   module.exports = Employee;
   
