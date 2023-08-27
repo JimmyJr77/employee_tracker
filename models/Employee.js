@@ -31,6 +31,14 @@ class Employee {
         `, [firstName, lastName, roleId, managerId]);
       }
 
+    updateEmployeeRole(selectedEmployeeId, newRoleId) {
+        console.log("updatedEmployeeRole is getting the following passed through it: " + selectedEmployeeId + "," + newRoleId);
+        return this.connection.promise().query(`
+            UPDATE employee
+            SET role_id = ?
+            WHERE id = ?
+        `, [selectedEmployeeId, newRoleId]);
+    }
 };
 
   module.exports = Employee;

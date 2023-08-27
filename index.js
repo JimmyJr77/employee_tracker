@@ -28,6 +28,7 @@ function mainMenu() {
         'Add a department',
         'Add a role',
         'Add an employee',
+        'Update an employee role',
         'Exit'
       ],
     },
@@ -108,6 +109,42 @@ function mainMenu() {
             return [];
           });
       }
+    },
+    {
+      type: 'list',
+      name: 'update_employee',
+      message: 'Select an employee to update their role:',
+      when: (answers) => answers.action === 'Update an employee role',
+      choices: () => {
+        return employeeModel.viewAllEmployees()
+          .then(([employees]) => {
+            const choices = employees.map(employee => {
+              console.log(`Employee: ${employee.first_name} ${employee.last_name}, ID: ${employee.id}`);
+              return { name: `${employee.first_name} ${employee.last_name}`, value: employee.id };
+            });
+            return choices;
+          })
+          .catch(error => {
+            console.error('Error fetching employees:', error);
+            return [];
+          });
+      }
+    },
+    {
+      type: 'list',
+      name: 'new_role',
+      message: 'Select the new role for the employee:',
+      when: (answers) => answers.action === 'Update an employee role',
+      choices: () => {
+        return roleModel.listRoles()
+          .then(([roles]) => {
+            return roles.map(role => ({ name: role.title, value: role.id }));
+          })
+          .catch(error => {
+            console.error('Error fetching roles:', error);
+            return [];
+          });
+      }
     }
     
   ]).then((answers) => {
@@ -119,10 +156,17 @@ function mainMenu() {
       viewEmployeesOption();
     } else if (answers.action === 'Add a department') {
       addDepartmentOption(answers.new_department); // passing the new department name
+      console.log("Department added: " + answers.new_department)
     } else if (answers.action === 'Add a role') {
       addRoleOption(answers.new_role, answers.new_role_salary, answers.new_role_department); // passing the new role name
+      console.log("Role added: " + answers.new_role)
     } else if (answers.action === 'Add an employee') {
       addEmployeeOption(answers.new_employee_first_name, answers.new_employee_last_name, answers.new_employee_role, answers.new_employee_manager);
+      console.log("Employee manager added: " + answers.new_employee_manager)
+    } else if (answers.action === 'Update an employee role') {
+      updateEmployeeRoleOption(answers.update_employee, answers.new_role); // Use "update_employee" here
+      console.log(answers.update_employee);
+      console.log(answers.new_role);
     } else if (answers.action === 'Exit') {
       console.log('Goodbye!');
       process.exit(0);
@@ -207,6 +251,19 @@ function addEmployeeOption(firstName, lastName, roleId, managerId) {
       mainMenu();
     });
 }
+
+function updateEmployeeRoleOption(selectedEmployeeId, newRoleId) {
+  employeeModel.updateEmployeeRole(selectedEmployeeId, newRoleId)
+    .then(() => {
+      console.log('Employee role updated successfully');
+      mainMenu();
+    })
+    .catch(error => {
+      console.error('Error updating employee role:', error);
+      mainMenu();
+    });
+}
+
 
 
 // Start the application
