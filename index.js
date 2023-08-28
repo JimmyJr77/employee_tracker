@@ -14,7 +14,7 @@ const departmentModel = new Department(connection);
 const roleModel = new Role(connection);
 const employeeModel = new Employee(connection);
 
-// Function to display the main menu
+// Function to initiate question prompts starting with the main menu
 function mainMenu() {
   inquirer.prompt([
     {
@@ -32,6 +32,7 @@ function mainMenu() {
         'Exit'
       ],
     },
+    // Follow on questions based on main menu
     {
       type: 'input',
       name: 'new_department',
@@ -102,7 +103,7 @@ function mainMenu() {
       choices: () => {
         return employeeModel.viewAllEmployees()
           .then(([employees]) => {
-            return employees.map(employee => ({ name: `${employee.first_name} ${employee.last_name}`, value: employee.id }));
+            return employees.map(employee => ({ name: `${employee.first_name} ${employee.last_name}`, value: employee.employee_id }));
           })
           .catch(error => {
             console.error('Error fetching employees:', error);
@@ -119,8 +120,8 @@ function mainMenu() {
         return employeeModel.viewAllEmployees()
           .then(([employees]) => {
             const choices = employees.map(employee => {
-              console.log(`Employee: ${employee.first_name} ${employee.last_name}, ID: ${employee.id}`);
-              return { name: `${employee.first_name} ${employee.last_name}`, value: employee.id };
+              // console.log(`Employee: ${employee.first_name} ${employee.last_name}, ID: ${employee.employee_id}`);
+              return { name: `${employee.first_name} ${employee.last_name}`, value: employee.employee_id };
             });
             return choices;
           })
@@ -146,7 +147,7 @@ function mainMenu() {
           });
       }
     }
-    
+  // Pass answers through required functions
   ]).then((answers) => {
     if (answers.action === 'View all departments') {
       viewDepartmentsOption();
@@ -155,16 +156,16 @@ function mainMenu() {
     } else if (answers.action === 'View all employees') {
       viewEmployeesOption();
     } else if (answers.action === 'Add a department') {
-      addDepartmentOption(answers.new_department); // passing the new department name
+      addDepartmentOption(answers.new_department);
       console.log("Department added: " + answers.new_department)
     } else if (answers.action === 'Add a role') {
-      addRoleOption(answers.new_role, answers.new_role_salary, answers.new_role_department); // passing the new role name
+      addRoleOption(answers.new_role, answers.new_role_salary, answers.new_role_department);
       console.log("Role added: " + answers.new_role)
     } else if (answers.action === 'Add an employee') {
       addEmployeeOption(answers.new_employee_first_name, answers.new_employee_last_name, answers.new_employee_role, answers.new_employee_manager);
       console.log("Employee manager added: " + answers.new_employee_manager)
     } else if (answers.action === 'Update an employee role') {
-      updateEmployeeRoleOption(answers.update_employee, answers.new_role); // Use "update_employee" here
+      updateEmployeeRoleOption(answers.new_role, answers.update_employee);
       console.log(answers.update_employee);
       console.log(answers.new_role);
     } else if (answers.action === 'Exit') {
@@ -177,6 +178,7 @@ function mainMenu() {
   });
 }
 
+// Function to call the department model function
 function viewDepartmentsOption() {
   departmentModel.viewAllDepartments()
     .then(([departments]) => {
@@ -190,6 +192,7 @@ function viewDepartmentsOption() {
     });
 }
 
+// Function to call the role model function
 function viewRolesOption() {
   roleModel.viewAllRoles()
     .then(([roles]) => {
@@ -203,6 +206,7 @@ function viewRolesOption() {
     });
 }
 
+// Function to call the employees model function
 function viewEmployeesOption() {
   employeeModel.viewAllEmployees()
     .then(([employees]) => {
@@ -216,6 +220,7 @@ function viewEmployeesOption() {
     });
 }
 
+// Function to call the department model function and add a department
 function addDepartmentOption(newDeptName) {
   departmentModel.addDepartment(newDeptName)
     .then(() => {
@@ -227,7 +232,7 @@ function addDepartmentOption(newDeptName) {
       mainMenu();
     });
 }
-
+// Function to call the role model function and add a role
 function addRoleOption(newRoleName, newRoleSalary, newRoleDept) {
   roleModel.addRole(newRoleName, newRoleSalary, newRoleDept)
     .then(() => {
@@ -240,6 +245,7 @@ function addRoleOption(newRoleName, newRoleSalary, newRoleDept) {
     });
 }
 
+// Function to call the employee model function and add an employee
 function addEmployeeOption(firstName, lastName, roleId, managerId) {
   employeeModel.addEmployee(firstName, lastName, roleId, managerId)
     .then(() => {
@@ -252,8 +258,9 @@ function addEmployeeOption(firstName, lastName, roleId, managerId) {
     });
 }
 
-function updateEmployeeRoleOption(selectedEmployeeId, newRoleId) {
-  employeeModel.updateEmployeeRole(selectedEmployeeId, newRoleId)
+// Function to call the employee model function and update employees roles
+function updateEmployeeRoleOption(newRoleId, selectedEmployeeId) {
+  employeeModel.updateEmployeeRole(newRoleId, selectedEmployeeId)
     .then(() => {
       console.log('Employee role updated successfully');
       mainMenu();

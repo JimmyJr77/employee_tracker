@@ -1,16 +1,15 @@
-// This file will define Role classes for Department entities
-// Each class will have methods to interact with the database, 
-// such as fetching data, inserting new records, updating records, and deleting records.
-
+// Create a class for Roles
 class Role {
     constructor(connection) {
         this.connection = connection;
     }
-  
+
+    // Depricated function to list Roles - doesn't include some required information.
     listRoles() {
         return this.connection.promise().query('SELECT * FROM role;');
     }
 
+    // Function to view all Roles
     viewAllRoles() {
         return this.connection.promise().query(`
             SELECT 
@@ -23,6 +22,7 @@ class Role {
         `);
     }
 
+    // Function to add a Role
     addRole(newRoleName, newRoleSalary, newRoleDept) {
         return this.connection.promise().query(`
             INSERT INTO role (title, salary, department_id)

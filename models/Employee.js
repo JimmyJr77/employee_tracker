@@ -1,12 +1,10 @@
-// This file will define JavaScript classes for Employee entities
-// Each class will have methods to interact with the database, 
-// such as fetching data, inserting new records, updating records, and deleting records.
-
+// Create a class for Employees
 class Employee {
     constructor(connection) {
         this.connection = connection;
     }
   
+    // Function to view all employees
     viewAllEmployees() {
         return this.connection.promise().query(`
             SELECT
@@ -24,6 +22,7 @@ class Employee {
             `);
     }
 
+    // Function to add employees
     addEmployee(firstName, lastName, roleId, managerId) {
         return this.connection.promise().query(`
           INSERT INTO employee (first_name, last_name, role_id, manager_id)
@@ -31,15 +30,17 @@ class Employee {
         `, [firstName, lastName, roleId, managerId]);
       }
 
-    updateEmployeeRole(selectedEmployeeId, newRoleId) {
-        console.log("updatedEmployeeRole is getting the following passed through it: " + selectedEmployeeId + "," + newRoleId);
+    // Function to update employees with a new role
+    updateEmployeeRole(newRoleId, selectedEmployeeId) {
+        console.log("updatedEmployeeRole is getting the following passed through it: " + newRoleId + "," + selectedEmployeeId );
         return this.connection.promise().query(`
             UPDATE employee
             SET role_id = ?
             WHERE id = ?
-        `, [selectedEmployeeId, newRoleId]);
+        `, [newRoleId, selectedEmployeeId]);
     }
 };
 
-  module.exports = Employee;
+// Export employee module
+module.exports = Employee;
   

@@ -1,3 +1,4 @@
+-- Dictating use of the management_db database
 USE management_db;
 
 -- Insert sample data into the department table

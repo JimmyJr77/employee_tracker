@@ -1,16 +1,15 @@
-// This file will define JavaScript classes for Department entities
-// Each class will have methods to interact with the database, 
-// such as fetching data, inserting new records, updating records, and deleting records.
-
+// Create a class for Department
 class Department {
     constructor(connection) {
         this.connection = connection;
     }
-  
+    
+    // Function to view all departments
     viewAllDepartments() {
         return this.connection.promise().query('SELECT * FROM department;');
     }
   
+    // function to add a department
     addDepartment(newDeptName) {
         return this.connection.promise().query(`
             INSERT INTO department (name)
@@ -19,5 +18,6 @@ class Department {
     }
 }
   
-  module.exports = Department;
+// export departments
+module.exports = Department;
   
